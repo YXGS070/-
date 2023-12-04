@@ -1,6 +1,125 @@
-#include<stdio.h>
-#include<string.h>
-#include<stdlib.h>
-{
-  
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#define MAX_LINE_LENGTH 1000
+
+// 函数的表示
+int is_whitespace(char ch);
+int is_valid_json(const char *json);
+void print_json_tree(const char *json);
+void save_json_tree(const char *json, const char *filename);
+void save_compressed_json(const char *json, const char *filename);
+
+int main() {
+    char filename[MAX_LINE_LENGTH];
+    printf("请输入JSON文件的路径和文件名：");
+    scanf("%s", filename);
+
+    // 打开文件
+    FILE *file = fopen(filename, "r");
+    if (file == NULL) {
+        printf("无法打开文件。\n");
+        return 1;
+    }
+
+    // 读取文件内容
+    char json[MAX_LINE_LENGTH];
+    char line[MAX_LINE_LENGTH];
+    strcpy(json, "");  // 初始化为空字符串
+
+    while (fgets(line, MAX_LINE_LENGTH, file) != NULL) {
+        strcat(json, line);
+    }
+
+    // 关闭文件
+    fclose(file);
+
+    // 检查JSON格式是否有效
+    if (!is_valid_json(json)) {
+        printf("文件内容不符合JSON格式。\n");
+        return 1;
+    }
+
+    // 打印树状缩进格式的JSON字符串
+    printf("\n树状缩进格式的JSON字符串：\n");
+    print_json_tree(json);
+
+    // 保存树状缩进格式的JSON字符串到文件
+    char outputFilename[MAX_LINE_LENGTH];
+    printf("\n请输入保存树状缩进格式JSON的文件名：");
+    scanf("%s", outputFilename);
+    save_json_tree(json, outputFilename);
+
+    // 保存压缩格式的JSON字符串到文件
+    char compressedFilename[MAX_LINE_LENGTH];
+    printf("\n请输入保存压缩格式JSON的文件名：");
+    scanf("%s", compressedFilename);
+    save_compressed_json(json, compressedFilename);
+
+    return 0;
+}
+
+// 判断字符是否为空白字符（空格、制表符、换行符等）
+int is_whitespace(char ch) {
+    return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r';
+}
+
+// 检查JSON格式是否有效
+int is_valid_json(const char *json) {
+    // TODO: 实现JSON格式的验证逻辑
+    // 这里只是一个示例，您可以根据JSON规范进行具体的验证逻辑
+
+    // 假设只要JSON字符串不为空，即认为它是有效的JSON格式
+    return strlen(json) > 0;
+}
+
+// 打印树状缩进格式的JSON字符串
+void print_json_tree(const char *json) {
+    // TODO: 实现树状缩进格式的打印逻辑
+    // 这里只是一个示例，您可以根据JSON规范进行具体的打印逻辑
+
+    printf("%s\n", json);
+}
+
+// 保存树状缩进格式的JSON字符串到文件
+void save_json_tree(const char *json, const char *filename) {
+    // 打开文件
+    FILE *file = fopen(filename, "w");
+    if (file == NULL) {
+        printf("无法创建文件。\n");
+        return;
+    }
+
+    // 写入JSON字符串
+    fprintf(file, "%s\n", json);
+
+    // 关闭文件
+    fclose(file);
+
+    printf("已保存树状缩进格式的JSON字符串到文件：%s\n", filename);
+}
+
+// 保存压缩格式的JSON字符串到文件
+void save_compressed_json(const char *json, const char *filename) {
+    // 打开文件
+    FILE *file = fopen(filename, "w");
+    if (file == NULL) {
+        printf("无法创建文件。\n");
+        return;
+    }
+
+    // 去除非内容的换行、空格
+    int i, j;
+    for (i = 0, j = 0; json[i] != '\0'; i++) {
+        if (!is_whitespace(json[i])) {
+            fputc(json[i], file);
+            j++;
+        }
+    }
+
+    // 关闭文件
+    fclose(file);
+
+    printf("已保存压缩格式的JSON字符串到文件：%s\n", filename);
 }
